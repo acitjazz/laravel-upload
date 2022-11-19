@@ -1,0 +1,46 @@
+{
+    "name": "acitjazz/uploadendpoint",
+    "description": ":package_description",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Acit Jazz",
+            "email": "acitjazz@gmail.com",
+            "homepage": "https://eurekapage.com"
+        }
+    ],
+    "homepage": "https://github.com/acitjazz/uploadendpoint",
+    "keywords": ["Laravel", "UploadEndpoint"],
+    "require": {
+        "illuminate/support": "~9",
+        "cviebrock/eloquent-sluggable": "^9.0",
+        "jenssegers/mongodb": "^3.9",
+        "league/glide-laravel": "^1.0",
+        "cloudinary-labs/cloudinary-laravel": "^2.0",
+        "league/flysystem-aws-s3-v3": "^3.10"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~9.0",
+        "orchestra/testbench": "~7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Acitjazz\\UploadEndpoint\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Acitjazz\\UploadEndpoint\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Acitjazz\\UploadEndpoint\\UploadEndpointServiceProvider"
+            ],
+            "aliases": {
+                "UploadEndpoint": "Acitjazz\\UploadEndpoint\\Facades\\UploadEndpoint"
+            }
+        }
+    }
+}
