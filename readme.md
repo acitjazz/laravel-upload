@@ -27,6 +27,11 @@ php artisan vendor:publish --tag=acitjazz-upload-config
 php artisan vendor:publish --tag=acitjazz-vue-component
 ```
 
+migration:
+
+``` bash
+php artisan migrate
+```
 
 Example usage component:
 
