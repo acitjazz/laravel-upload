@@ -1,8 +1,7 @@
 <template>
     <div class="ac-component">
        <div class="ac-upload-container">
-        <input type="file" ref="filePond" name="file" />
-        <textarea :name="name" v-model="resfile" style="display:none"></textarea>
+        <input type="file" ref="filePond" name="file"  />
        </div>
        <div class="ac-slot">
          <slot></slot>
@@ -10,6 +9,7 @@
     </div>
   </template>
   
+
 <script>
 import * as FilePond from 'filepond';
 import 'filepond/dist/filepond.min.css';
@@ -23,7 +23,7 @@ FilePond.registerPlugin(
     FilePondPluginImageExifOrientation,
     FilePondPluginFileValidateType);
 export default {
-    props:['title','folder','value','placeholder','settings','name','filetype'],
+    props:['title','folder','modelValue','placeholder','settings','name','filetype'],
     data () {
         return {
             options:{
@@ -50,15 +50,15 @@ export default {
                     },
                     revert: './media/destroy',
                     restore: './media/restore/',
-                    load: './media/',
+                    load: './',
                     fetch: './media/fetch/',
                 },
                 maxFiles: 1,
                 allowMultiple:false,
                 allowReorder:true,
-                required: true,
+                required: false,
                 credits:false,
-                labelIdle:this.placeholder ?? 'Drag & Drop your files or <span class="filepond--label-action"> Browse </span>',
+                labelIdle:'Browse',
                 files:[],
             },
             resfile:null,
@@ -66,21 +66,25 @@ export default {
         }
     },
     created(){
-        this.resfile = this.value;
-        this.mapFiles(this.value)
+        this.resfile = this.modelValue;
+        this.options.labelIdle = this.placeholder ?? '  <i class="fas text-blue-400 fa-cloud-arrow-up"></i><br> Drag & Drop your files or <span class="filepond--label-action"> Browse </span>'
+        this.mapFiles(this.modelValue)
     },
     methods:{
         addFiles(newfile){
             this.files.push(JSON.parse(newfile));
-            this.resfile = JSON.stringify(this.files);
+            this.resfile = this.files;
+            this.$emit('update:modelValue',this.resfile);
+            this.$emit('uploaded',this.resfile);
             this.mapFiles(this.resfile)
         },
         mapFiles(files){
             try{
-                var filedata  = JSON.parse(files).map( (file) => {
+                let extensions =['jpg','jpeg','gif','png','webp'];
+                var filedata  = files.map( (file) => {
                     return {
                         media:file,
-                        source : file.path,
+                        source : extensions.includes(file.extension) ? 'media/'+file.path : 'storage/'+file.path,
                         options: {
                             type: 'local',
                             metadata: {
@@ -100,7 +104,8 @@ export default {
         removeFile(file){
             axios.delete('/media/destroy', { data: file})
             .then( (response) => {
-                 this.resfile = JSON.stringify(this.options.files);
+                 this.resfile = this.options.files;
+                this.$emit('update:modelValue',this.resfile);
             });
         }
     },  
@@ -124,5 +129,19 @@ export default {
 <style lang="scss">
 .filepond--credits{
     display: none;
+}
+.filepond--drop-label.filepond--drop-label label{
+    cursor: pointer;
+    font-size: 12px;
+}
+.filepond--drop-label.filepond--drop-label label i{
+    font-size: 20px;
+}
+.filepond--root{
+    margin: 0;
+}
+.filepond--root,
+.filepond--root .filepond--drop-label {
+  height: 90px;
 }
 </style>
