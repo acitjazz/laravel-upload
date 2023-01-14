@@ -59,8 +59,11 @@ class UploadController extends Controller
                 'base_url' => 'image',
             ]);
             return $server->getImageResponse($path, request()->all());
-        } catch (\League\Glide\Filesystem\FileNotFoundException $err) {
+        }  catch (\League\Glide\Filesystem\FileNotFoundException $err) {
             return abort(404);
+        } catch(\Intervention\Image\Exception\NotReadableException $notread)
+        {
+           return $path;
         }
     }
 
@@ -89,8 +92,8 @@ class UploadController extends Controller
             $media->public_id = $folder;
             $media->readable_size = ($image->getSize()/1000) . 'KB';
             $media->name = $filename;
-            $media->width = getimagesize($image)[0];
-            $media->height = getimagesize($image)[1];
+            $media->width = getimagesize($image)[0] ?? 0;
+            $media->height = getimagesize($image)[1] ?? 0;
             $media->url = $download . $fileext;
             $media->save();
             $image->move($path, $media->url);

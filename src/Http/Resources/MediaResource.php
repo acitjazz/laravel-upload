@@ -14,6 +14,8 @@ class MediaResource extends JsonResource
     */
    public function toArray($request)
    {
+      $extension = ['jpg','jpeg','gif','png','webp'];
+      $url = $this->storage == 'local' ?  url('/media').'/'.config('uploadendpoint.bucket_name').'/'.$this->url : $this->url;
       return [
          'id' => $this->id,
          'name' => $this->name,
@@ -26,8 +28,8 @@ class MediaResource extends JsonResource
          'readable_size' => $this->readable_size,
          'height' => $this->height,
          'width' => $this->width,
-         'path' => config('uploadendpoint.bucket_name').'/'.$this->url,
-         'url' => $this->storage == 'local' ?  url('/media').'/'.config('uploadendpoint.bucket_name').'/'.$this->url : $this->url,
+         'path' => in_array($this->extension,$extension) ? config('uploadendpoint.bucket_name').'/'.$this->url : $this->url,
+         'url' => in_array($this->extension,$extension) ? $url : url('/storage').'/'.$this->url,
       ];
    }
 }
